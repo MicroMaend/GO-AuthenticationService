@@ -1,0 +1,6 @@
+@GO_AuthService_HostAddress = http://localhost:5262
+
+GET {{GO_AuthService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

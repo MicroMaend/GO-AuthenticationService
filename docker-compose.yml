@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  authservice:
+    build:
+      context: .
+      dockerfile: GO-AuthService/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
