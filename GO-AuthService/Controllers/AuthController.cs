@@ -23,6 +23,11 @@ public class AuthController : ControllerBase
         var userCollection = mongoSection["UsersCollection"];
         var adminCollection = mongoSection["AdminsCollection"];
 
+        Console.WriteLine($"Jwt__Secret i AuthController: '{_config["Jwt__Secret"]}' (Length: {_config["Jwt__Secret"]?.Length ?? 0})");
+        Console.WriteLine($"Jwt__Issuer i AuthController: '{_config["Jwt__Issuer"]}'");
+        Console.WriteLine($"Jwt__Audience i AuthController: '{_config["Jwt__Audience"]}'");
+        Console.WriteLine($"Mongo__ConnectionString i AuthController: '{_config["Mongo__ConnectionString"]}'");
+
         var Db = mongoClient.GetDatabase(userDbName);
 
         _users = Db.GetCollection<User>(userCollection);
@@ -106,12 +111,14 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.Role, role)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Secret"]));
+        // Hent JWT secret direkte fra _config her med det korrekte navn fra Vault
+        var secretKey = _config["Jwt__Secret"];
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
+            issuer: _config["Jwt__Issuer"], // Brug det korrekte navn fra Vault
+            audience: _config["Jwt__Audience"], // Brug det korrekte navn fra Vault
             claims: claims,
             expires: DateTime.Now.AddDays(1),
             signingCredentials: creds

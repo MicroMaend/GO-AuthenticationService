@@ -1,6 +1,17 @@
 version: "3.8"
 
 services:
+  vault:
+    image: hashicorp/vault
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: wopwopwop123
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+
   authservice:
     build:
       context: .
@@ -9,3 +20,11 @@ services:
       - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+
+      # Vault miljøvariabler
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=wopwopwop123
+
+    depends_on:
+      - vault
