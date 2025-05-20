@@ -33,7 +33,7 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          docker build . -f GO-AuthenticationService/Dockerfile \
+          docker build . -f GO-AuthService/Dockerfile \
           -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION} \
           -t ${DOCKER_USER}/${IMAGE_NAME}:latest
 
