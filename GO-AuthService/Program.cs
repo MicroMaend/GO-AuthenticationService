@@ -147,6 +147,4 @@ app.Run();
 
 //vault login wopwopwop123
 
-//vault kv put secret/go-authservice Jwt__Audience="http://localhost" Jwt__Issuer="GO.AuthService" Jwt__Secret="din-he
-//mmelige - nøgle - 32 - tegn - hej - med - dig - type - shi" Mongo__ConnectionString="mongodb + srv://micromaend:micromaend@go-userserviced
-//b.utyowom.mongodb.net /? retryWrites = true & w = majority & appName = GO - UserServiceDB"
+//vault kv put secret/go-authservice Jwt__Audience="http://localhost" Jwt__Issuer="GO.AuthService" Jwt__Secret="din-hemmelige - nøgle - 32 - tegn - hej - med - dig - type - shi" Mongo__ConnectionString="mongodb + srv://micromaend:micromaend@go-userservicedb.utyowom.mongodb.net /? retryWrites = true & w = majority & appName = GO - UserServiceDB"
