@@ -80,13 +80,17 @@ Console.WriteLine($"Jwt__Secret læst fra Vault: '{secretKey}' (Length: {secretK
 var issuer = builder.Configuration["Jwt__Issuer"];
 var audience = builder.Configuration["Jwt__Audience"];
 
-// Register MongoClient
+// Hent UserService MongoDB connection string fra Vault (samme som i UserService)
+var userMongoConnectionString = builder.Configuration["Mongo__UserServiceConnectionString"];
+
+// Register MongoClient for AuthService (bruger samme connection string som UserService)
 builder.Services.AddSingleton<IMongoClient>(_ =>
 {
-    var connectionString = builder.Configuration["Mongo__ConnectionString"];
-    if (string.IsNullOrWhiteSpace(connectionString))
-        throw new Exception("MongoDB connection string is missing!");
-    return new MongoClient(connectionString);
+    if (string.IsNullOrWhiteSpace(userMongoConnectionString))
+    {
+        throw new Exception("MongoDB connection string for UserService mangler fra Vault!");
+    }
+    return new MongoClient(userMongoConnectionString);
 });
 
 // JWT Authentication setup
@@ -109,11 +113,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Authorization policies
+// Authorization policies (hvis relevant for AuthService)
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+    // Tilføj eventuelle autorisationspolitikker her
 });
 
 // Controllers and Swagger
@@ -136,7 +139,6 @@ app.MapControllers();
 
 app.Run();
 
-
 // Vault secrets til test
 
 //igennem vault cli
@@ -147,4 +149,4 @@ app.Run();
 
 //vault login wopwopwop123
 
-//vault kv put secret/go-authservice Jwt__Audience="http://localhost" Jwt__Issuer="GO.AuthService" Jwt__Secret="din-hemmelige - nøgle - 32 - tegn - hej - med - dig - type - shi" Mongo__ConnectionString="mongodb + srv://micromaend:micromaend@go-userservicedb.utyowom.mongodb.net /? retryWrites = true & w = majority & appName = GO - UserServiceDB"
+//vault kv put secret/go-authservice Jwt__Audience="http://localhost" Jwt__Issuer="GO.AuthService" Jwt__Secret="din-hemmelige - nøgle - 32 - tegn - hej - med - dig - type - shi" Mongo__UserServiceConnectionString="mongodb + srv://micromaend:micromaend@go-userservicedb.utyowom.mongodb.net /? retryWrites = true & w = majority & appName = GO - UserServiceDB"
