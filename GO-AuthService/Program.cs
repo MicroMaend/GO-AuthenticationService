@@ -119,6 +119,17 @@ builder.Services.AddAuthorization(options =>
     // Tilføj eventuelle autorisationspolitikker her
 });
 
+// CORS configuration
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:8080") // Tillad din frontend på denne port
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 // Controllers and Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -126,11 +137,14 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(); // Aktiver CORS middleware - vigtigt at den kommer før Authentication og Authorization
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
